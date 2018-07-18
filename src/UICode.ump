@@ -1,0 +1,51 @@
+//Will be fleshed out after completing the models (started for testing purposes)
+
+class Window
+{
+  after constructor
+  {
+    mainPanel = new MainPanel(new LayerPanel(), new ToolPanel());
+    
+    add(mainPanel);
+    
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    pack();
+    setVisible(true);
+  }
+}
+
+class MainPanel
+{
+  after constructor
+  {
+    setLayout(new BorderLayout());
+    
+    add(layerPanel, BorderLayout.EAST);
+    add(toolPanel, BorderLayout.WEST);
+  }
+}
+
+class LayerPanel
+{
+  after constructor
+  {
+    addLayer(new Layer(Layer.DEFAULT_HEIGHT, Layer.DEFAULT_WIDTH, Layer.DEFAULT_COLOR, this));
+    add(getLayer(0));
+  }
+}
+
+class ToolPanel
+{
+}
+
+class Layer
+{
+  after constructor
+  {
+    setPreferredSize(new Dimension(width, height));
+  }
+}
+
+class Tool
+{
+}
