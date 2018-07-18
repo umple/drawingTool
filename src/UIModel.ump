@@ -1,0 +1,55 @@
+use Dependencies.ump;
+
+class Window
+{
+  singleton;
+  
+  isA JFrame;
+  lazy MainPanel mainPanel;
+}
+
+class Panel
+{ 
+  isA JPanel;
+}
+
+class LayerPanel
+{
+  isA Panel;
+  1 -- 1..* Layer;
+}
+
+class ToolPanel
+{
+  isA Panel;
+  1 -- 1..* Tool;
+}
+
+class MainPanel
+{
+  isA Panel;
+  
+  LayerPanel layerPanel;
+  ToolPanel toolPanel;
+}
+
+class Layer
+{
+  isA Panel;
+  
+  const DEFAULT_WIDTH = 500;
+  const DEFAULT_HEIGHT = 500;
+  const Color DEFAULT_COLOR = Color.WHITE;
+  
+  Integer height;
+  Integer width;
+  Color bgColor;
+  
+  [height > 0 && height <= 1000]
+  [width > 0 && width <= 1000]
+}
+
+class Tool
+{ 
+  isA JButton;
+}

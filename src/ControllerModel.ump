@@ -1,0 +1,7 @@
+use Dependencies.ump;
+
+class Controller
+{
+  isA ActionListener;
+  Window mainWindow;
+}

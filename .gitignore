@@ -1,5 +1,8 @@
 # Compiled class file
-*.class
+src/*.class
+
+#Generated Java classes
+src/*.java
 
 # Log file
 *.log

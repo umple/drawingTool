@@ -1,0 +1,40 @@
+external JFrame{}
+external JPanel{}
+external JButton{}
+external interface ActionListener{}
+
+ class Window
+{
+  depend javax.swing.JFrame;
+}
+
+class Controller
+{
+  depend java.awt.event.*;
+}
+
+class Panel
+{
+  depend javax.swing.JPanel;
+}
+
+class MainPanel
+{
+  depend java.awt.BorderLayout;
+}
+
+class LayerPanel
+{
+  depend java.awt.Color;
+}
+
+class Layer
+{
+  depend java.awt.Dimension;
+  depend java.awt.Color;
+}
+
+class Tool
+{
+  depend javax.swing.JButton;
+}
