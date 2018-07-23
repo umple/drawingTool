@@ -1,16 +1,11 @@
-use Dependencies.ump;
+use swing;
 
 class Window
 {
   singleton;
   
-  isA JFrame;
+  isA Frame;
   lazy MainPanel mainPanel;
-}
-
-class Panel
-{ 
-  isA JPanel;
 }
 
 class LayerPanel
@@ -44,6 +39,7 @@ class Layer
   Integer height;
   Integer width;
   Color bgColor;
+  lazy ImageData data;
   
   [height > 0 && height <= 1000]
   [width > 0 && width <= 1000]
@@ -51,5 +47,6 @@ class Layer
 
 class Tool
 { 
-  isA JButton;
+  isA Button;
+  
 }

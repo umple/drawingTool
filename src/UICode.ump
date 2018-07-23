@@ -1,8 +1,19 @@
 //Will be fleshed out after completing the models (started for testing purposes)
 
+class Frame
+{
+
+}
+
+
 class Window
 {
   after constructor
+  {
+    init();
+  }
+  
+  public void init()
   {
     mainPanel = new MainPanel(new LayerPanel(), new ToolPanel());
     

@@ -1,0 +1,6 @@
+use swing;
+
+class ImageData
+{
+  isA Image;
+}
