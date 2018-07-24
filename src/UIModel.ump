@@ -11,7 +11,15 @@ class Window
 class LayerPanel
 {
   isA Panel;
-  1 -- 1..* Layer;
+  LayerSidePanel sidePanel;
+  lazy Layer currentLayer;
+}
+
+class LayerSidePanel
+{
+  isA Panel;
+  1 -> 0..* Layer layers;
+  //1 -- 1..* Panel previews;
 }
 
 class ToolPanel
@@ -39,7 +47,7 @@ class Layer
   Integer height;
   Integer width;
   Color bgColor;
-  lazy ImageData data;
+  lazy Image imageData;
   
   [height > 0 && height <= 1000]
   [width > 0 && width <= 1000]
@@ -49,4 +57,5 @@ class Tool
 { 
   isA Button;
   
+  JLabel name;
 }

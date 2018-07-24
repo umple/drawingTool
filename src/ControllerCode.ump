@@ -1,7 +1,20 @@
 class Controller
 {
-  public actionPerformed(ActionEvent e)
+  after constructor
+  {
+    getMainWindow().getMainPanel().addToAllActionListener(this);
+  }
+  
+  public void actionPerformed(ActionEvent e)
   {
     //to implement
+  }
+}
+
+class MainPanel
+{
+  public void addToAllActionListener(Controller contr)
+  {
+    //addActionListener();
   }
 }

@@ -5,7 +5,6 @@ class Frame
 
 }
 
-
 class Window
 {
   after constructor
@@ -15,7 +14,7 @@ class Window
   
   public void init()
   {
-    mainPanel = new MainPanel(new LayerPanel(), new ToolPanel());
+    mainPanel = new MainPanel(new LayerPanel(new LayerSidePanel()), new ToolPanel());
     
     add(mainPanel);
     
@@ -36,12 +35,25 @@ class MainPanel
   }
 }
 
+class LayerSidePanel
+{
+  after constructor
+  { 
+    addLayer(new Layer(Layer.DEFAULT_HEIGHT, Layer.DEFAULT_WIDTH, Layer.DEFAULT_COLOR));
+  }
+  
+  after addLayer
+  {
+    add(new JLabel(new ImageIcon(aLayer.getImageSource())));
+  }
+}
+
 class LayerPanel
 {
   after constructor
   {
-    addLayer(new Layer(Layer.DEFAULT_HEIGHT, Layer.DEFAULT_WIDTH, Layer.DEFAULT_COLOR, this));
-    add(getLayer(0));
+    add(sidePanel);
+    add(sidePanel.getLayer(0));
   }
 }
 
@@ -54,6 +66,12 @@ class Layer
   after constructor
   {
     setPreferredSize(new Dimension(width, height));
+    setImageData(new Image(new BufferedImage((int)(width/10), (int)(height/10), BufferedImage.TYPE_INT_ARGB)));
+  }
+  
+  public BufferedImage getImageSource()
+  {
+    return getImageData().getSrcImage();
   }
 }
 

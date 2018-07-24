@@ -4,6 +4,7 @@ mixset swing {
   external JFrame{}
   external JPanel{}
   external JButton{}
+  external JLabel{}
   external BufferedImage{}
   external interface ActionListener{}
   
@@ -17,9 +18,15 @@ mixset swing {
   }
   
   class Panel
-  { 
+  {
     depend javax.swing.JPanel;
     isA JPanel;
+  }
+  
+  class Label
+  {
+    depend javax.swing.JLabel;
+    isA JLabel;
   }
   
   interface Listener
@@ -28,10 +35,9 @@ mixset swing {
     isA ActionListener;
   }
   
-  interface Image
+  class Image
   {
     depend java.awt.image.BufferedImage;
-    isA BufferedImage;
   }
   
   //Dependencies needed to implement functionality
@@ -46,20 +52,37 @@ mixset swing {
 	depend java.awt.BorderLayout;
   }
 
-  class LayerPanel
+  class LayerSidePanel
   {
 	depend java.awt.Color;
+	depend javax.swing.*;
+  }
+  
+  class ToolPanel
+  {
+    depend javax.swing.JLabel;
   }
 
   class Layer
   {
 	depend java.awt.Dimension;
 	depend java.awt.Color;
+	depend java.awt.image.BufferedImage;
+  }
+  
+  class ImageData
+  {
+    depend java.awt.Color;
   }
 
   class Button
   {
 	depend javax.swing.JButton;
+  }
+  
+  class Tool
+  {
+    depend javax.swing.JLabel;
   }
   
   class Controller

@@ -1,0 +1,26 @@
+use swing;
+
+class Image
+{
+  BufferedImage srcImage;
+}
+
+class ToolProprieties
+{
+  const DEFAULT_SIZE = 10;
+  const DEFAULT_OPACITY = 1.0;
+  
+  name;
+  Float opacity;
+  Boolean isSelector;
+  Integer currentSize;
+  Integer rgbColor;
+  
+  [opacity > 0.0 && opacity <= DEFAULT_OPACITY]
+  [currentSize > 0 && currentSize <= 100]
+}
+
+association
+{
+  1 ToolProprieties -> 1 Tool;
+}
