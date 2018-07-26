@@ -14,7 +14,8 @@ class Window
   
   public void init()
   {
-    mainPanel = new MainPanel(new LayerPanel(new LayerSidePanel()), new ToolPanel());
+    LayerSidePanel sidePanel = new LayerSidePanel();
+    mainPanel = new MainPanel(new LayerPanel(sidePanel), new ToolPanel());
     
     add(mainPanel);
     
@@ -33,18 +34,45 @@ class MainPanel
     add(layerPanel, BorderLayout.EAST);
     add(toolPanel, BorderLayout.WEST);
   }
+  
+  public void paintAt(int x, int y, int prevX, int prevY)
+  {
+    layerPanel.paintOnCurrentLayer(x, y, prevX, prevY);
+  }
 }
 
 class LayerSidePanel
 {
   after constructor
-  { 
+  {
     addLayer(new Layer(Layer.DEFAULT_HEIGHT, Layer.DEFAULT_WIDTH, Layer.DEFAULT_COLOR));
   }
   
   after addLayer
   {
-    add(new JLabel(new ImageIcon(aLayer.getImageSource())));
+    addPreview(new JLabel(new ImageIcon(aLayer.getImageSource().getScaledInstance(Layer.PREVIEW_HEIGHT, Layer.PREVIEW_WIDTH, Image.SCALE_SMOOTH))));
+  }
+  
+  after addPreview, addPreviewAt
+  {
+    add(aPreview);
+  }
+  
+  public void repaintPreview()
+  {
+    Layer currentLayer = getLayerPanel().getCurrentLayer();
+    
+    remove(getPreview(indexOfLayer(currentLayer)));
+    removePreview(getPreview(indexOfLayer(currentLayer)));
+    
+    revalidate();
+    
+    addPreviewAt(new JLabel(new ImageIcon(currentLayer.getImageSource().getScaledInstance(Layer.PREVIEW_HEIGHT, Layer.PREVIEW_WIDTH, Image.SCALE_SMOOTH))),
+    indexOfLayer(currentLayer));
+    
+    add(getPreview(indexOfLayer(currentLayer)));
+    
+    repaint();
   }
 }
 
@@ -52,8 +80,33 @@ class LayerPanel
 {
   after constructor
   {
-    add(sidePanel);
-    add(sidePanel.getLayer(0));
+    setLayout(new BorderLayout());
+    
+    add(getSidePanel(), BorderLayout.WEST);
+    getSidePanel().setLayerPanel(this);
+    
+    setCurrentLayer(getSidePanel().getLayer(0));
+    add(currentLayer, BorderLayout.EAST);
+  }
+  
+  public void paintOnCurrentLayer(int x, int y, int prevX, int prevY)
+  {
+    BufferedImage img = currentLayer.getImageSource();
+    Graphics2D g = img.createGraphics();
+    
+    if(prevX == -1 || prevY == -1)
+    {
+      prevX = x;
+      prevY = y;
+    }
+    
+    g.setColor(new Color(0, 0, 0));
+    BasicStroke stroke = new BasicStroke(1);
+    g.setStroke(stroke);
+    g.drawLine(x, y, prevX, prevY);
+    g.dispose();
+    
+    getSidePanel().repaintPreview();
   }
 }
 
@@ -66,12 +119,22 @@ class Layer
   after constructor
   {
     setPreferredSize(new Dimension(width, height));
-    setImageData(new Image(new BufferedImage((int)(width/10), (int)(height/10), BufferedImage.TYPE_INT_ARGB)));
+    setImageData(new Image(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)));
+    
+    repaint();
   }
   
   public BufferedImage getImageSource()
   {
     return getImageData().getSrcImage();
+  }
+  
+  public void paintComponent(Graphics g)
+  {
+    super.paintComponent(g);
+    
+    g.drawImage(getImageSource(), 0, 0, null);
+    repaint();
   }
 }
 

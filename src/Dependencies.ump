@@ -7,8 +7,11 @@ mixset swing {
   external JLabel{}
   external BufferedImage{}
   external interface ActionListener{}
+  external MouseInputAdapter{}
   
   //Generic classes used in model with Swing dependencies
+  
+  //Generic JFrame implementation
   class Frame
   {
     depend javax.swing.JFrame;
@@ -17,18 +20,21 @@ mixset swing {
     abstract void init();
   }
   
+  //Generic JPanel implementation
   class Panel
   {
     depend javax.swing.JPanel;
     isA JPanel;
   }
   
+  //Generic JLabel implementation
   class Label
   {
     depend javax.swing.JLabel;
     isA JLabel;
   }
   
+  //Generic ActionListener implementation
   interface Listener
   {
     depend java.awt.event.*;
@@ -42,6 +48,7 @@ mixset swing {
   
   //Dependencies needed to implement functionality
   //in code
+  
   class Window
   {
     depend javax.swing.JFrame;
@@ -55,7 +62,15 @@ mixset swing {
   class LayerSidePanel
   {
 	depend java.awt.Color;
+	depend java.awt.Image;
 	depend javax.swing.*;
+  }
+  
+  class LayerPanel
+  {
+    depend java.awt.*;
+    depend java.awt.image.BufferedImage;
+    depend javax.swing.*;
   }
   
   class ToolPanel
@@ -68,6 +83,8 @@ mixset swing {
 	depend java.awt.Dimension;
 	depend java.awt.Color;
 	depend java.awt.image.BufferedImage;
+	depend java.awt.Graphics;
+	depend java.awt.Graphics2D;
   }
   
   class ImageData
@@ -88,6 +105,12 @@ mixset swing {
   class Controller
   {
     depend java.awt.event.*;
+  }
+  
+  class MouseEventListener
+  {
+    depend java.awt.event.*;
+    depend javax.swing.event.MouseInputAdapter;
   }
   
 }

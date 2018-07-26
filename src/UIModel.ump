@@ -1,33 +1,42 @@
 use swing;
 
+//Singleton class that instantiates the main frame
 class Window
 {
   singleton;
   
   isA Frame;
+  //Container for the various panels of the application
   lazy MainPanel mainPanel;
 }
 
+//Contains and manages the panels relating to layer management (layers previews and selection
+//as well as containing the current layer selected)
 class LayerPanel
 {
   isA Panel;
+  
   LayerSidePanel sidePanel;
   lazy Layer currentLayer;
 }
 
+//Manages and displays a preview of all layers
 class LayerSidePanel
 {
   isA Panel;
-  1 -> 0..* Layer layers;
-  //1 -- 1..* Panel previews;
+  lazy LayerPanel layerPanel;
+  0..1 -> 0..* Layer layers;
+  0..1 -> 0..* JLabel previews;
 }
 
+//Manages and displays all tools
 class ToolPanel
 {
   isA Panel;
   1 -- 1..* Tool;
 }
 
+//Contains and manages the layout of the main panels of the application
 class MainPanel
 {
   isA Panel;
@@ -36,12 +45,17 @@ class MainPanel
   ToolPanel toolPanel;
 }
 
+//Represents a visual display of each layer
 class Layer
 {
   isA Panel;
   
   const DEFAULT_WIDTH = 500;
   const DEFAULT_HEIGHT = 500;
+  
+  const PREVIEW_HEIGHT = 150;
+  const PREVIEW_WIDTH = 150;
+  
   const Color DEFAULT_COLOR = Color.WHITE;
   
   Integer height;
@@ -53,6 +67,7 @@ class Layer
   [width > 0 && width <= 1000]
 }
 
+//Represents a visual display of each tool
 class Tool
 { 
   isA Button;

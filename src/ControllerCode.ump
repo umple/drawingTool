@@ -2,6 +2,7 @@ class Controller
 {
   after constructor
   {
+    mouseListener = new MouseEventListener();
     getMainWindow().getMainPanel().addToAllActionListener(this);
   }
   
@@ -15,6 +16,26 @@ class MainPanel
 {
   public void addToAllActionListener(Controller contr)
   {
-    //addActionListener();
+    layerPanel.getCurrentLayer().addMouseListener(contr.getMouseListener());
+    layerPanel.getCurrentLayer().addMouseMotionListener(contr.getMouseListener());
   }
+}
+
+class MouseEventListener
+{
+  public void mouseDragged(MouseEvent e) 
+  {
+    mouseDraggedEv(e);
+  }
+
+  public void mouseExited(MouseEvent e) 
+  {
+    mouseExitedEv(e);
+  }
+
+  public void mouseReleased(MouseEvent e) 
+  {
+    mouseReleasedEv(e);
+  }
+  
 }

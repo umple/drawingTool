@@ -1,5 +1,41 @@
+use swing;
+
+//Deals with user actions
 class Controller
 {
   isA Listener;
+  
+  //Main frame for window interaction
   Window mainWindow;
+  //Handles mouse events
+  lazy MouseEventListener mouseListener;
+}
+
+//Handles mouse events
+class MouseEventListener
+{
+  isA MouseInputAdapter;
+  
+  Integer previousX = -1;
+  Integer previousY = -1;
+  
+  //State machine that manages AWT mouse events
+  MouseEvents
+  {
+    idle
+    {
+      entry/ {previousX = -1; previousY = -1;}
+      mouseDraggedEv(MouseEvent e) -> painting;
+    }
+    painting
+    {
+      mouseReleasedEv(MouseEvent e) -> idle;
+      mouseExitedEv(MouseEvent e) -> idle;
+      mouseDraggedEv(MouseEvent e) /{ Window.getInstance().getMainPanel().paintAt(e.getX(), e.getY(), previousX, previousY); 
+                                      previousX = e.getX(); previousY = e.getY(); } -> painting;
+    }
+    selecting
+    {}
+  }
+  
 }

@@ -1,19 +1,26 @@
 use swing;
 
+//Contains the image data for each layer
 class Image
 {
   BufferedImage srcImage;
 }
 
+//Contains the proprieties of each tool
 class ToolProprieties
 {
   const DEFAULT_SIZE = 10;
   const DEFAULT_OPACITY = 1.0;
   
+  //Label to be associated with the tool
   name;
+  //Strength of the tool
   Float opacity;
+  //Whether the tool is in painting mode or in selecting mode
   Boolean isSelector;
+  //The size of the tool on usage
   Integer currentSize;
+  //The color that a brushstroke by the tool takes
   Integer rgbColor;
   
   [opacity > 0.0 && opacity <= DEFAULT_OPACITY]
