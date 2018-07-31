@@ -18,6 +18,7 @@ class LayerPanel
   
   LayerSidePanel sidePanel;
   lazy Layer currentLayer;
+  lazy LayeredPanel drawingSurface;
 }
 
 //Manages and displays a preview of all layers
@@ -25,6 +26,10 @@ class LayerSidePanel
 {
   isA Panel;
   lazy LayerPanel layerPanel;
+  lazy Button addLayerButton;
+  lazy Panel addLayerButtonPanel;
+  lazy Panel containerForPreviews;
+  lazy Layer lastSelectedLayer;
   0..1 -> 0..* Layer layers;
   0..1 -> 0..* JLabel previews;
 }
@@ -33,6 +38,8 @@ class LayerSidePanel
 class ToolPanel
 {
   isA Panel;
+  lazy Tool currentlySelectedTool;
+  lazy Tool lastSelectedTool;
   1 -- 1..* Tool;
 }
 
@@ -45,7 +52,7 @@ class MainPanel
   ToolPanel toolPanel;
 }
 
-//Represents a visual display of each layer
+//Represents the visual display of a layer
 class Layer
 {
   isA Panel;
@@ -53,8 +60,8 @@ class Layer
   const DEFAULT_WIDTH = 500;
   const DEFAULT_HEIGHT = 500;
   
-  const PREVIEW_HEIGHT = 150;
-  const PREVIEW_WIDTH = 150;
+  const PREVIEW_HEIGHT = 75;
+  const PREVIEW_WIDTH = 75;
   
   const Color DEFAULT_COLOR = Color.WHITE;
   
@@ -67,10 +74,10 @@ class Layer
   [width > 0 && width <= 1000]
 }
 
-//Represents a visual display of each tool
+//Represents the visual display of a tool
 class Tool
 { 
   isA Button;
   
-  JLabel name;
+  JLabel toolName;
 }

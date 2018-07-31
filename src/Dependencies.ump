@@ -3,6 +3,7 @@
 mixset swing {
   external JFrame{}
   external JPanel{}
+  external JLayeredPane{}
   external JButton{}
   external JLabel{}
   external BufferedImage{}
@@ -25,6 +26,13 @@ mixset swing {
   {
     depend javax.swing.JPanel;
     isA JPanel;
+  }
+  
+  //Generic JLayeredPane implementation
+  class LayeredPanel
+  {
+    depend javax.swing.JLayeredPane;
+    isA JLayeredPane;
   }
   
   //Generic JLabel implementation
@@ -57,13 +65,19 @@ mixset swing {
   class MainPanel
   {
 	depend java.awt.BorderLayout;
+	depend java.awt.Color;
+	depend javax.swing.JLabel;
   }
 
   class LayerSidePanel
   {
-	depend java.awt.Color;
+  	depend java.awt.Color;
 	depend java.awt.Image;
+	depend java.awt.BorderLayout;
+	depend java.awt.Dimension;
+	
 	depend javax.swing.*;
+	depend javax.swing.border.*;
   }
   
   class LayerPanel
@@ -80,11 +94,10 @@ mixset swing {
 
   class Layer
   {
-	depend java.awt.Dimension;
-	depend java.awt.Color;
+	depend java.awt.*;
 	depend java.awt.image.BufferedImage;
-	depend java.awt.Graphics;
-	depend java.awt.Graphics2D;
+	depend javax.swing.BorderFactory;
+	depend javax.swing.border.*;
   }
   
   class ImageData
@@ -95,6 +108,7 @@ mixset swing {
   class Button
   {
 	depend javax.swing.JButton;
+	isA JButton;
   }
   
   class Tool
@@ -105,12 +119,14 @@ mixset swing {
   class Controller
   {
     depend java.awt.event.*;
+    depend javax.swing.JLabel;
   }
   
   class MouseEventListener
   {
     depend java.awt.event.*;
     depend javax.swing.event.MouseInputAdapter;
+    depend javax.swing.JLabel;
   }
   
 }

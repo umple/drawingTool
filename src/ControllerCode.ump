@@ -3,12 +3,21 @@ class Controller
   after constructor
   {
     mouseListener = new MouseEventListener();
-    getMainWindow().getMainPanel().addToAllActionListener(this);
+    mainWindow.getMainPanel().addToAllActionListener(this);
   }
   
   public void actionPerformed(ActionEvent e)
   {
-    //to implement
+    if(e.getActionCommand().equals("+"))
+    {
+      MainPanel sourcePanels = mainWindow.getMainPanel();
+      
+      if(e.getSource() == sourcePanels.getLayerPanel().getSidePanel().getAddLayerButton())
+      {
+        JLabel newPreview = sourcePanels.newLayer();
+        newPreview.addMouseListener(mouseListener);
+      }
+    }
   }
 }
 
@@ -16,8 +25,10 @@ class MainPanel
 {
   public void addToAllActionListener(Controller contr)
   {
-    layerPanel.getCurrentLayer().addMouseListener(contr.getMouseListener());
-    layerPanel.getCurrentLayer().addMouseMotionListener(contr.getMouseListener());
+    layerPanel.getDrawingSurface().addMouseListener(contr.getMouseListener());
+    layerPanel.getDrawingSurface().addMouseMotionListener(contr.getMouseListener());
+    
+    layerPanel.getSidePanel().addAllListeners(contr);
   }
 }
 
@@ -38,4 +49,19 @@ class MouseEventListener
     mouseReleasedEv(e);
   }
   
+  public void mouseClicked(MouseEvent e)
+  {
+    mouseClickedEv(e);
+  }
+  
+  public void changeActiveLayer(MouseEvent e)
+  {
+    Object obj = e.getSource();
+    if (obj instanceof JLabel)
+    {
+      JLabel preview = (JLabel)obj;
+      LayerSidePanel parentObj = (LayerSidePanel)(preview.getParent().getParent());
+      parentObj.selectLayer(preview);
+    }
+  }
 }
