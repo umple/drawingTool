@@ -1,34 +1,92 @@
 class Controller
-{
+{ 
   after constructor
   {
     mouseListener = new MouseEventListener();
-    mainWindow.getMainPanel().addToAllActionListener(this);
+    sliderListener = new Controller.SliderListener();
+    MainPanel sourcePanels = mainWindow.getMainPanel();
+    sourcePanels.addToAllActionListener(this, sliderListener);
   }
   
   public void actionPerformed(ActionEvent e)
   {
+    Object source = e.getSource();
+    MainPanel sourcePanels = mainWindow.getMainPanel();
+    
     if(e.getActionCommand().equals("+"))
     {
-      MainPanel sourcePanels = mainWindow.getMainPanel();
-      
-      if(e.getSource() == sourcePanels.getLayerPanel().getSidePanel().getAddLayerButton())
+      JLabel newPreview = sourcePanels.newLayer();
+      newPreview.addMouseListener(mouseListener);
+    }
+    else if(e.getActionCommand().equals("-"))
+    {
+      sourcePanels.deleteCurrentLayer();
+    }
+    else if(e.getActionCommand().equals("\u2191")) //arrow upwards
+    {
+      sourcePanels.moveLayerUp();
+    }
+    else if(e.getActionCommand().equals("\u2193")) //arrow downwards
+    {
+      sourcePanels.moveLayerDown();
+    }
+    else if(source instanceof Tool)
+    {
+      if(sourcePanels.getToolPanel().getCurrentlySelectedTool() != ((Tool)source))
       {
-        JLabel newPreview = sourcePanels.newLayer();
-        newPreview.addMouseListener(mouseListener);
+        sourcePanels.changeTool((Tool)source);
       }
+    }
+    else if(e.getActionCommand().equals("Change tool color"))
+    {
+      Tool tool = sourcePanels.getToolPanel().getCurrentlySelectedTool();
+      Color colorSelected = JColorChooser.showDialog(sourcePanels, "Choose color", tool.getToolProprieties().getColor());
+      if (colorSelected != null)
+      {
+        tool.getToolProprieties().setColor(colorSelected);
+      }
+    }
+  }
+  public static class SliderListener implements ChangeListener 
+  { 
+    public void stateChanged(ChangeEvent e) 
+    {
+	  Object source = e.getSource();
+	  MainPanel sourcePanels = Window.getInstance().getMainPanel();
+ 
+	  if(source instanceof JSlider)
+	  {
+		JSlider slider = (JSlider)source;
+		int value = slider.getValue();
+		if(value <= 50)
+		{
+		  value = (int)(value*value/50);
+		  if(value == 0) value = 1;
+		}
+	 
+		ToolProprieties toolP = sourcePanels.getToolPanel().getCurrentlySelectedTool().getToolProprieties();
+		if("sizeSlider".equals(slider.getName()))
+		{
+		  toolP.setCurrentSize(value);
+		}
+		else if("opacitySlider".equals(slider.getName()))
+		{
+		  toolP.setOpacity(value);
+		}
+	  }
     }
   }
 }
 
 class MainPanel
 {
-  public void addToAllActionListener(Controller contr)
+  public void addToAllActionListener(Controller contr, Controller.SliderListener sliderListener)
   {
     layerPanel.getDrawingSurface().addMouseListener(contr.getMouseListener());
     layerPanel.getDrawingSurface().addMouseMotionListener(contr.getMouseListener());
     
     layerPanel.getSidePanel().addAllListeners(contr);
+    toolPanel.addAllListeners(contr, sliderListener);
   }
 }
 

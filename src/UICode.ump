@@ -2,6 +2,7 @@ class Window
 {
   after constructor
   {
+    
     init();
   }
   
@@ -43,32 +44,91 @@ class MainPanel
     layerPanel.getSidePanel().addLayer(layer);
     return layerPanel.getSidePanel().getPreview(layerPanel.getSidePanel().indexOfLayer(layer));
   }
+  
+  public void changeTool(Tool tool)
+  {
+    toolPanel.setCurrentlySelectedTool(tool);
+  }
+  
+  public void deleteCurrentLayer()
+  {
+    layerPanel.getSidePanel().deleteCurrentLayer();
+  }
+  
+  public void moveLayerUp()
+  {
+    layerPanel.getSidePanel().moveLayerUp();
+  }
+  
+  public void moveLayerDown()
+  {
+    layerPanel.getSidePanel().moveLayerDown();
+  }
 }
 
 class LayerSidePanel
 {
   after constructor
   {
-    addLayerButtonPanel = new Panel();
+    layerManagementButtonPanel = new Panel();
     containerForPreviews = new Panel();
-    addLayerButtonPanel.setLayout(new BorderLayout());
+    layerManagementButtonPanel.setLayout(new GridLayout(0, 1));
     containerForPreviews.setLayout(new BoxLayout(containerForPreviews, BoxLayout.Y_AXIS));
     containerForPreviews.setBackground(Layer.DEFAULT_COLOR);
+    containerForPreviews.setBorder(BorderFactory.createTitledBorder("Layers"));
     
-    addLayerButton = new Button();
-    addLayerButton.setText("+");
-    addLayerButton.setPreferredSize(new Dimension(20, 20));
+    initButtons();
     
     add(containerForPreviews, BorderLayout.NORTH);
-    add(addLayerButtonPanel, BorderLayout.SOUTH);
+    add(layerManagementButtonPanel, BorderLayout.SOUTH);
     
     setOpaque(false);
+  }
+  
+  private void initButtons()
+  {
+    addLayerButton = new Button();
+    addLayerButton.setText("+");
+    addLayerButton.setPreferredSize(new Dimension(25, 25));
+    
+    removeLayerButton = new Button();
+    removeLayerButton.setText("-");
+    removeLayerButton.setPreferredSize(new Dimension(25, 25));
+    
+    pushLayerUp = new Button();
+    pushLayerUp.setText("\u2191");
+    pushLayerUp.setPreferredSize(new Dimension(25, 25));
+    
+    pushLayerDown = new Button();
+    pushLayerDown.setText("\u2193");
+    pushLayerDown.setPreferredSize(new Dimension(25, 25));
+    
+    layerManagementButtonPanel.add(addLayerButton);
+    layerManagementButtonPanel.add(removeLayerButton);
+    layerManagementButtonPanel.add(pushLayerUp);
+    layerManagementButtonPanel.add(pushLayerDown);
   }
   
   after addLayer
   {
     layerPanel.setCurrentLayer(aLayer);
     addPreview(new JLabel(new ImageIcon(aLayer.getImageSource().getScaledInstance(Layer.PREVIEW_HEIGHT, Layer.PREVIEW_WIDTH, Image.SCALE_SMOOTH))));
+    repaintPreview();
+  }
+  
+  before removeLayer
+  {
+    int oldIndex = indexOfLayer(aLayer);
+    int newIndex = (oldIndex == 0) ? 0 : oldIndex-1;
+    removePreview(getPreview(oldIndex));
+  }
+  
+  after removeLayer
+  {
+    layerPanel.setCurrentLayer(getLayer(newIndex));
+    lastSelectedLayer = null;
+    aLayer.clear();
+    
     repaintPreview();
   }
   
@@ -90,17 +150,22 @@ class LayerSidePanel
     {
       getPreview(indexOfLayer(lastSelectedLayer)).setBackground(Color.WHITE);
     }
-    
     getPreview(indexOfLayer(currentLayer)).setIcon(new ImageIcon(currentLayer.getImageSource().getScaledInstance(Layer.PREVIEW_HEIGHT, Layer.PREVIEW_WIDTH, Image.SCALE_SMOOTH)));
-    addLayerButtonPanel.remove(addLayerButton);
     
     revalidate();
     
     JLabel newPrev = getPreview(indexOfLayer(currentLayer));
     newPrev.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-    newPrev.setBackground(Color.BLACK);
+    newPrev.setBackground(Color.DARK_GRAY);
     
-    addLayerButtonPanel.add(addLayerButton);
+    for(JLabel p : getPreviews())
+    {
+      containerForPreviews.remove(p);
+    }
+    for(JLabel p : getPreviews())
+    {
+      containerForPreviews.add(p);
+    }
     
     lastSelectedLayer = currentLayer;
   }
@@ -108,6 +173,9 @@ class LayerSidePanel
   public void addAllListeners(Controller contr)
   {
     addLayerButton.addActionListener(contr);
+    removeLayerButton.addActionListener(contr);
+    pushLayerUp.addActionListener(contr);
+    pushLayerDown.addActionListener(contr);
     getPreview(0).addMouseListener(contr.getMouseListener());
   }
   
@@ -115,6 +183,49 @@ class LayerSidePanel
   {
     layerPanel.setCurrentLayer(getLayer(indexOfPreview(preview)));
     repaintPreview();
+  }
+  
+  public void deleteCurrentLayer()
+  {
+    if(numberOfLayers() > 1)
+    {
+      removeLayer(layerPanel.getCurrentLayer());
+    }
+    else
+    {
+      layerPanel.getCurrentLayer().clear();
+      repaintPreview();
+    }
+  }
+  
+  public void moveLayerUp()
+  {
+    if(indexOfLayer(layerPanel.getCurrentLayer()) != 0)
+    {
+      Layer currentLayer = layerPanel.getCurrentLayer();
+      int index = indexOfLayer(currentLayer);
+      
+      addOrMoveLayerAt(currentLayer, index-1);
+      addOrMovePreviewAt(getPreview(index), index-1);
+      layerPanel.updateLayers();
+      
+      repaintPreview();
+    }
+  }
+  
+  public void moveLayerDown()
+  {
+    if(indexOfLayer(layerPanel.getCurrentLayer()) < numberOfLayers()-1)
+    {
+      Layer currentLayer = layerPanel.getCurrentLayer();
+      int index = indexOfLayer(currentLayer);
+      
+      addOrMoveLayerAt(currentLayer, index+1);
+      addOrMovePreviewAt(getPreview(index), index+1);
+      layerPanel.updateLayers();
+      
+      repaintPreview();
+    }
   }
 }
 
@@ -149,13 +260,11 @@ class LayerPanel
     if(!drawingSurface.isAncestorOf(aCurrentLayer))
     {
       aCurrentLayer.setBounds(0, 0, Layer.DEFAULT_HEIGHT, Layer.DEFAULT_WIDTH);
-      drawingSurface.add(aCurrentLayer, 0, 0);
+      drawingSurface.setLayer(aCurrentLayer, sidePanel.indexOfLayer(aCurrentLayer)+1);
+      drawingSurface.add(aCurrentLayer);
+      updateLayers();
       drawingSurface.revalidate();
       drawingSurface.repaint();
-    }
-    else
-    {
-      drawingSurface.moveToFront(aCurrentLayer);
     }
   }
   
@@ -172,13 +281,37 @@ class LayerPanel
       prevY = y;
     }
     
-    g.setColor(new Color(0, 0, 0));
-    BasicStroke stroke = new BasicStroke(3);
-    g.setStroke(stroke);
-    g.drawLine(x, y, prevX, prevY);
+    ToolProprieties toolProprieties = ((MainPanel)getParent()).getToolPanel().getCurrentlySelectedTool().getToolProprieties();
+    
+    if(toolProprieties.getIsEraser())
+    {
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT, ((float)(toolProprieties.getOpacity())/100)));
+    }
+    else
+    {
+      Color color = toolProprieties.getColor();
+	  g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(toolProprieties.getOpacity()*2.5)));
+    }
+    
+    BasicStroke stroke = new BasicStroke(toolProprieties.getCurrentSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	g.setStroke(stroke);
+	g.drawLine(x, y, prevX, prevY);
+    
     g.dispose();
     
     getSidePanel().repaintPreview();
+  }
+  
+  public void updateLayers()
+  {
+    for(Component c : drawingSurface.getComponents())
+    {
+      if(c instanceof Layer)
+      {
+        Layer layer = (Layer)c;
+        drawingSurface.setLayer(layer, (sidePanel.numberOfLayers()-sidePanel.indexOfLayer(layer)));
+      }
+    }
   }
 }
 
@@ -186,7 +319,123 @@ class ToolPanel
 {
   after constructor
   {
+    setLayout(new BorderLayout());
+    toolViewContainer = new Panel();
+    toolViewContainer.setBackground(Layer.DEFAULT_COLOR);
+    toolViewContainer.setLayout(new GridLayout(0, 1));
+    toolViewContainer.setBorder(BorderFactory.createTitledBorder("Tools"));
+    
+    toolProprieties = new Panel();
+    toolProprieties.setBackground(Layer.DEFAULT_COLOR);
+    toolProprieties.setLayout(new GridLayout(0, 1));
+    toolProprieties.setBorder(BorderFactory.createTitledBorder("Tool Proprieties"));
+    
+    addProprietiesContent();
+    
+    addAllBaseTools();
+    
+    add(toolViewContainer, BorderLayout.NORTH);
+    add(toolProprieties, BorderLayout.SOUTH);
+    
     setOpaque(false);
+  }
+  
+  after addTool
+  {
+    setCurrentlySelectedTool(aTool);
+    toolViewContainer.add(aTool);
+  }
+  
+  after setCurrentlySelectedTool
+  {
+    sizeSlider.setValue(adjustSliderValue(aCurrentlySelectedTool.getToolProprieties().getCurrentSize()));
+    opacitySlider.setValue(adjustSliderValue(aCurrentlySelectedTool.getToolProprieties().getOpacity()));
+    
+    if(aCurrentlySelectedTool.getToolProprieties().getIsEraser())
+    {
+      changeColor.setVisible(false);
+    }
+    else
+    {
+      changeColor.setVisible(true);
+    }
+    
+    for(Tool t : getTools())
+    {
+      t.setBackground(Color.WHITE);
+    }
+    aCurrentlySelectedTool.setBackground(Color.LIGHT_GRAY);
+  }
+  
+  private int adjustSliderValue(int value)
+  {
+    if(value <= 50)
+    {
+	  value = (int)(Math.sqrt(value*50));
+	  if(value == 0) value = 1;
+    }
+    return value;
+  }
+  
+  public void addAllBaseTools()
+  {
+    Tool ink = new Tool("Ink");
+    ink.getToolProprieties().setCurrentSize(5);
+    addTool(ink);
+    
+    Tool airBrush = new Tool("Airbrush");
+    airBrush.getToolProprieties().setCurrentSize(100);
+    airBrush.getToolProprieties().setOpacity(1);
+    addTool(airBrush);
+    
+    Tool eraser = new Tool("Eraser");
+    eraser.getToolProprieties().setCurrentSize(20);
+    eraser.getToolProprieties().setIsEraser(true);
+    addTool(eraser);
+    
+    setCurrentlySelectedTool(getTool(0));
+  }
+  
+  public void addProprietiesContent()
+  {
+    toolProprieties.add(new JLabel("Size"));
+    sizeSlider = new JSlider(1, 100, 5);
+    sizeSlider.setName("sizeSlider");
+    toolProprieties.add(sizeSlider);
+    
+    toolProprieties.add(new JLabel("Opacity"));
+    opacitySlider = new JSlider(1, 100, 100);
+    opacitySlider.setName("opacitySlider");
+    toolProprieties.add(opacitySlider);
+    
+    changeColor = new Button();
+    changeColor.setText("Change tool color");
+    toolProprieties.add(changeColor);
+  }
+  
+  public void addAllListeners(Controller contr, Controller.SliderListener sliderListener)
+  {
+    for(Tool tool : getTools())
+    {
+      tool.addActionListener(contr);
+    }
+    changeColor.addActionListener(contr);
+    sizeSlider.addChangeListener(sliderListener);
+    opacitySlider.addChangeListener(sliderListener);
+  }
+}
+
+class Tool
+{
+  after constructor
+  {
+    setText(toolName);
+    setPreferredSize(new Dimension(30, 30));
+    setBackground(Color.WHITE);
+    setOpaque(true);
+    setBorderPainted(false);
+    
+    setToolProprieties(new ToolProprieties(toolName, ToolProprieties.DEFAULT_OPACITY, false, ToolProprieties.DEFAULT_SIZE, Color.BLACK, this));
   }
 }
 
@@ -213,4 +462,12 @@ class Layer
     g.drawImage(getImageSource(), 0, 0, null);
     repaint();
   }
+  
+  public void clear()
+  {
+   Graphics2D graphics = (Graphics2D) getImageSource().getGraphics();
+   graphics.setBackground(new Color(255, 255, 255, 0));
+   graphics.clearRect(0, 0, width, height);
+  }
+  
 }

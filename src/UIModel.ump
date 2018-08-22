@@ -26,8 +26,11 @@ class LayerSidePanel
 {
   isA Panel;
   lazy LayerPanel layerPanel;
-  lazy Button addLayerButton;
-  lazy Panel addLayerButtonPanel;
+  lazy internal Button addLayerButton;
+  lazy internal Button removeLayerButton;
+  lazy internal Button pushLayerUp;
+  lazy internal Button pushLayerDown;
+  lazy Panel layerManagementButtonPanel;
   lazy Panel containerForPreviews;
   lazy Layer lastSelectedLayer;
   0..1 -> 0..* Layer layers;
@@ -40,7 +43,12 @@ class ToolPanel
   isA Panel;
   lazy Tool currentlySelectedTool;
   lazy Tool lastSelectedTool;
-  1 -- 1..* Tool;
+  lazy Panel toolViewContainer;
+  lazy Panel toolProprieties;
+  lazy internal Button changeColor;
+  lazy internal JSlider sizeSlider;
+  lazy internal JSlider opacitySlider;
+  0..1 -> 0..* Tool;
 }
 
 //Contains and manages the layout of the main panels of the application
@@ -79,5 +87,5 @@ class Tool
 { 
   isA Button;
   
-  JLabel toolName;
+  toolName;
 }

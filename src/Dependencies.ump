@@ -74,6 +74,7 @@ mixset swing {
   	depend java.awt.Color;
 	depend java.awt.Image;
 	depend java.awt.BorderLayout;
+	depend java.awt.GridLayout;
 	depend java.awt.Dimension;
 	
 	depend javax.swing.*;
@@ -90,6 +91,12 @@ mixset swing {
   class ToolPanel
   {
     depend javax.swing.JLabel;
+    depend javax.swing.JSlider;
+    depend javax.swing.BorderFactory;
+    depend java.awt.GridLayout;
+    depend java.awt.BorderLayout;
+    depend java.awt.Color;
+    depend java.util.Hashtable;
   }
 
   class Layer
@@ -114,12 +121,24 @@ mixset swing {
   class Tool
   {
     depend javax.swing.JLabel;
+    depend java.awt.Color;
+    depend java.awt.Dimension;
+  }
+  
+  class ToolProprieties
+  {
+    depend java.awt.Color;
   }
   
   class Controller
   {
     depend java.awt.event.*;
+    depend java.awt.Color;
+    depend java.lang.*;
+    depend javax.swing.event.*;
     depend javax.swing.JLabel;
+    depend javax.swing.JSlider;
+    depend javax.swing.JColorChooser;
   }
   
   class MouseEventListener

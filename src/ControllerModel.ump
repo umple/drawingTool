@@ -9,6 +9,8 @@ class Controller
   Window mainWindow;
   //Handles mouse events
   lazy MouseEventListener mouseListener;
+  //Handles events triggered by sliders
+  lazy SliderListener sliderListener;
 }
 
 //Handles mouse events

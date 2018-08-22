@@ -9,25 +9,25 @@ class Image
 //Contains the proprieties of each tool
 class ToolProprieties
 {
-  const DEFAULT_SIZE = 10;
-  const DEFAULT_OPACITY = 1.0;
+  const DEFAULT_SIZE = 20;
+  const DEFAULT_OPACITY = 100;
   
   //Label to be associated with the tool
   name;
   //Strength of the tool
-  Float opacity;
-  //Whether the tool is in painting mode or in selecting mode
-  Boolean isSelector;
+  Integer opacity;
+  //Whether the tool erases ink
+  Boolean isEraser;
   //The size of the tool on usage
   Integer currentSize;
   //The color that a brushstroke by the tool takes
-  Integer rgbColor;
+  Color color;
   
-  [opacity > 0.0 && opacity <= DEFAULT_OPACITY]
+  [opacity > 0 && opacity <= DEFAULT_OPACITY]
   [currentSize > 0 && currentSize <= 100]
 }
 
 association
 {
-  1 ToolProprieties -> 1 Tool;
+  0..1 ToolProprieties -- 1 Tool;
 }
