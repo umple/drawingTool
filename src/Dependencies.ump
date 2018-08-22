@@ -93,6 +93,7 @@ mixset swing {
     depend javax.swing.JLabel;
     depend javax.swing.JSlider;
     depend javax.swing.BorderFactory;
+    depend javax.swing.SwingConstants;
     depend java.awt.GridLayout;
     depend java.awt.BorderLayout;
     depend java.awt.Color;
@@ -125,7 +126,7 @@ mixset swing {
     depend java.awt.Dimension;
   }
   
-  class ToolProprieties
+  class ToolProperties
   {
     depend java.awt.Color;
   }

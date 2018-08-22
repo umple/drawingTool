@@ -281,19 +281,19 @@ class LayerPanel
       prevY = y;
     }
     
-    ToolProprieties toolProprieties = ((MainPanel)getParent()).getToolPanel().getCurrentlySelectedTool().getToolProprieties();
+    ToolProperties toolProperties = ((MainPanel)getParent()).getToolPanel().getCurrentlySelectedTool().getToolProperties();
     
-    if(toolProprieties.getIsEraser())
+    if(toolProperties.getIsEraser())
     {
-      g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT, ((float)(toolProprieties.getOpacity())/100)));
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT, ((float)(toolProperties.getOpacity())/100)));
     }
     else
     {
-      Color color = toolProprieties.getColor();
-	  g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(toolProprieties.getOpacity()*2.5)));
+      Color color = toolProperties.getColor();
+	  g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(toolProperties.getOpacity()*2.5)));
     }
     
-    BasicStroke stroke = new BasicStroke(toolProprieties.getCurrentSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    BasicStroke stroke = new BasicStroke(toolProperties.getCurrentSize(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	g.setStroke(stroke);
 	g.drawLine(x, y, prevX, prevY);
     
@@ -325,17 +325,17 @@ class ToolPanel
     toolViewContainer.setLayout(new GridLayout(0, 1));
     toolViewContainer.setBorder(BorderFactory.createTitledBorder("Tools"));
     
-    toolProprieties = new Panel();
-    toolProprieties.setBackground(Layer.DEFAULT_COLOR);
-    toolProprieties.setLayout(new GridLayout(0, 1));
-    toolProprieties.setBorder(BorderFactory.createTitledBorder("Tool Proprieties"));
+    toolProperties = new Panel();
+    toolProperties.setBackground(Layer.DEFAULT_COLOR);
+    toolProperties.setLayout(new GridLayout(0, 1));
+    toolProperties.setBorder(BorderFactory.createTitledBorder("Tool Properties"));
     
-    addProprietiesContent();
+    addPropertiesContent();
     
     addAllBaseTools();
     
     add(toolViewContainer, BorderLayout.NORTH);
-    add(toolProprieties, BorderLayout.SOUTH);
+    add(toolProperties, BorderLayout.SOUTH);
     
     setOpaque(false);
   }
@@ -348,10 +348,10 @@ class ToolPanel
   
   after setCurrentlySelectedTool
   {
-    sizeSlider.setValue(adjustSliderValue(aCurrentlySelectedTool.getToolProprieties().getCurrentSize()));
-    opacitySlider.setValue(adjustSliderValue(aCurrentlySelectedTool.getToolProprieties().getOpacity()));
+    sizeSlider.setValue(adjustSliderValue(aCurrentlySelectedTool.getToolProperties().getCurrentSize()));
+    opacitySlider.setValue(adjustSliderValue(aCurrentlySelectedTool.getToolProperties().getOpacity()));
     
-    if(aCurrentlySelectedTool.getToolProprieties().getIsEraser())
+    if(aCurrentlySelectedTool.getToolProperties().getIsEraser())
     {
       changeColor.setVisible(false);
     }
@@ -380,37 +380,38 @@ class ToolPanel
   public void addAllBaseTools()
   {
     Tool ink = new Tool("Ink");
-    ink.getToolProprieties().setCurrentSize(5);
+    ink.getToolProperties().setCurrentSize(5);
     addTool(ink);
     
     Tool airBrush = new Tool("Airbrush");
-    airBrush.getToolProprieties().setCurrentSize(100);
-    airBrush.getToolProprieties().setOpacity(1);
+    airBrush.getToolProperties().setCurrentSize(100);
+    airBrush.getToolProperties().setOpacity(1);
     addTool(airBrush);
     
     Tool eraser = new Tool("Eraser");
-    eraser.getToolProprieties().setCurrentSize(20);
-    eraser.getToolProprieties().setIsEraser(true);
+    eraser.getToolProperties().setCurrentSize(20);
+    eraser.getToolProperties().setIsEraser(true);
     addTool(eraser);
     
     setCurrentlySelectedTool(getTool(0));
   }
   
-  public void addProprietiesContent()
+  public void addPropertiesContent()
   {
-    toolProprieties.add(new JLabel("Size"));
+    toolProperties.add(new JLabel("Size"));
     sizeSlider = new JSlider(1, 100, 5);
     sizeSlider.setName("sizeSlider");
-    toolProprieties.add(sizeSlider);
+    toolProperties.add(sizeSlider);
     
-    toolProprieties.add(new JLabel("Opacity"));
+    toolProperties.add(new JLabel("Opacity"));
     opacitySlider = new JSlider(1, 100, 100);
     opacitySlider.setName("opacitySlider");
-    toolProprieties.add(opacitySlider);
+    toolProperties.add(opacitySlider);
     
     changeColor = new Button();
-    changeColor.setText("Change tool color");
-    toolProprieties.add(changeColor);
+    changeColor.setText("Colour...");
+    changeColor.setHorizontalAlignment(SwingConstants.LEFT);
+    toolProperties.add(changeColor);
   }
   
   public void addAllListeners(Controller contr, Controller.SliderListener sliderListener)
@@ -435,7 +436,7 @@ class Tool
     setOpaque(true);
     setBorderPainted(false);
     
-    setToolProprieties(new ToolProprieties(toolName, ToolProprieties.DEFAULT_OPACITY, false, ToolProprieties.DEFAULT_SIZE, Color.BLACK, this));
+    setToolProperties(new ToolProperties(toolName, ToolProperties.DEFAULT_OPACITY, false, ToolProperties.DEFAULT_SIZE, Color.BLACK, this));
   }
 }
 

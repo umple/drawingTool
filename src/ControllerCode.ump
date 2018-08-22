@@ -40,10 +40,10 @@ class Controller
     else if(e.getActionCommand().equals("Change tool color"))
     {
       Tool tool = sourcePanels.getToolPanel().getCurrentlySelectedTool();
-      Color colorSelected = JColorChooser.showDialog(sourcePanels, "Choose color", tool.getToolProprieties().getColor());
+      Color colorSelected = JColorChooser.showDialog(sourcePanels, "Choose color", tool.getToolProperties().getColor());
       if (colorSelected != null)
       {
-        tool.getToolProprieties().setColor(colorSelected);
+        tool.getToolProperties().setColor(colorSelected);
       }
     }
   }
@@ -64,7 +64,7 @@ class Controller
 		  if(value == 0) value = 1;
 		}
 	 
-		ToolProprieties toolP = sourcePanels.getToolPanel().getCurrentlySelectedTool().getToolProprieties();
+		ToolProperties toolP = sourcePanels.getToolPanel().getCurrentlySelectedTool().getToolProperties();
 		if("sizeSlider".equals(slider.getName()))
 		{
 		  toolP.setCurrentSize(value);

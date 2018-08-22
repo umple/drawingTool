@@ -44,7 +44,7 @@ class ToolPanel
   lazy Tool currentlySelectedTool;
   lazy Tool lastSelectedTool;
   lazy Panel toolViewContainer;
-  lazy Panel toolProprieties;
+  lazy Panel toolProperties;
   lazy internal Button changeColor;
   lazy internal JSlider sizeSlider;
   lazy internal JSlider opacitySlider;

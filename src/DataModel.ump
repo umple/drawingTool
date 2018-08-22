@@ -6,8 +6,8 @@ class Image
   BufferedImage srcImage;
 }
 
-//Contains the proprieties of each tool
-class ToolProprieties
+//Contains the properties of each tool
+class ToolProperties
 {
   const DEFAULT_SIZE = 20;
   const DEFAULT_OPACITY = 100;
@@ -29,5 +29,5 @@ class ToolProprieties
 
 association
 {
-  0..1 ToolProprieties -- 1 Tool;
+  0..1 ToolProperties -- 1 Tool;
 }
