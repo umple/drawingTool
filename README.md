@@ -5,7 +5,6 @@ For each aspect of the tool, the model and Java implementation were created sepa
 
 The tool supports multiple layer management and basic tool management.
 
-To compile and execute the application, obtain the Umple Compiler from http://dl.umple.org, and run the following commands from the src folder:
-  java -jar umple.jar \*.ump -c -
+To compile and execute the application, obtain the Umple Compiler from http://dl.umple.org, and run the following commands from the src folder:  
+  java -jar umple.jar \*.ump -c -  
   java Run
-  
