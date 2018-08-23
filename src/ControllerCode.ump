@@ -37,7 +37,7 @@ class Controller
         sourcePanels.changeTool((Tool)source);
       }
     }
-    else if(e.getActionCommand().equals("Change tool color"))
+    else if(e.getActionCommand().equals("Colour..."))
     {
       Tool tool = sourcePanels.getToolPanel().getCurrentlySelectedTool();
       Color colorSelected = JColorChooser.showDialog(sourcePanels, "Choose color", tool.getToolProperties().getColor());

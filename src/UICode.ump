@@ -300,6 +300,7 @@ class LayerPanel
     g.dispose();
     
     getSidePanel().repaintPreview();
+    currentLayer.repaint();
   }
   
   public void updateLayers()
@@ -310,6 +311,7 @@ class LayerPanel
       {
         Layer layer = (Layer)c;
         drawingSurface.setLayer(layer, (sidePanel.numberOfLayers()-sidePanel.indexOfLayer(layer)));
+        layer.repaint();
       }
     }
   }
@@ -461,7 +463,6 @@ class Layer
     super.paintComponent(g);
     
     g.drawImage(getImageSource(), 0, 0, null);
-    repaint();
   }
   
   public void clear()
@@ -469,6 +470,7 @@ class Layer
    Graphics2D graphics = (Graphics2D) getImageSource().getGraphics();
    graphics.setBackground(new Color(255, 255, 255, 0));
    graphics.clearRect(0, 0, width, height);
+   repaint();
   }
   
 }
